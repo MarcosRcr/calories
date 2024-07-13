@@ -1,11 +1,12 @@
 import { categories } from "../data/categories";
-import { useState, ChangeEvent, FormEvent, Dispatch } from "react";
+import { useState, ChangeEvent, FormEvent, Dispatch, useEffect } from "react";
 import { v4 as uuidv4} from "uuid";
 import { Activity } from "../types";
-import { ActivityActions } from "../reducers/activityReducer";
+import { ActivityActions, ActivityState } from "../reducers/activityReducer";
 
 type FormProps = {
-  dispatch: Dispatch<ActivityActions>;
+  dispatch: Dispatch<ActivityActions>,
+  state: ActivityState
 };
 
 const initialState: Activity = {
@@ -15,8 +16,16 @@ const initialState: Activity = {
   calories: 0,
 }
 
-export const Form = ({ dispatch }: FormProps) => {
+export const Form = ({ dispatch, state }: FormProps) => {
+
   const [form, setForm] = useState<Activity>(initialState);
+
+  useEffect(() => {
+    if(state.activeId){
+      const selecActivity = state.activities.filter(stateActivity => stateActivity.id === state.activeId )[0]
+      setForm(selecActivity)
+    }
+  },[state.activeId])
 
   const handleChange = (
     e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>
@@ -31,8 +40,7 @@ export const Form = ({ dispatch }: FormProps) => {
 
   const isValidActivity = () => {
     const { activity, calories } = form;
-    console.log(activity.trim() !== "" && calories > 0);
-    return activity.trim() !== "" && calories >= 0;
+    return activity.trim() !== "" && calories > 0;
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -46,7 +54,7 @@ export const Form = ({ dispatch }: FormProps) => {
   };
   return (
     <form
-      className="space-y-5 bg-blue-700 bg-opacity-80 shadow p-10 rounded-lg "
+      className="space-y-5 bg-orange-400 bg-opacity-80 shadow p-10 rounded-lg "
       onSubmit={handleSubmit}
     >
       <p className="font-semibold text-lg text-white">
