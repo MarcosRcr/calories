@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { Activity } from "../types";
-import { ActivityList } from "./ActivityList";
 import { Quantities } from "./Quantities";
 
 type CalorieTrackerProps = {
